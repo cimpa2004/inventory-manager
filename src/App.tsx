@@ -1,8 +1,14 @@
 import { StatusBar } from 'expo-status-bar';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { PaperProvider, Snackbar } from 'react-native-paper';
 
 import { getDatabase } from './database';
+import { LocalQueryProvider } from './data/localQuery';
+import { InventoryRouter } from './router';
+import { appTheme } from './theme';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 export default function App() {
   const [databaseReady, setDatabaseReady] = useState(false);
@@ -21,24 +27,34 @@ export default function App() {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <Text>
-        {databaseError
-          ? `Database initialization failed: ${databaseError.message}`
-          : databaseReady
-            ? 'Inventory database ready'
-            : 'Initializing inventory database...'}
-      </Text>
-      <StatusBar style="auto" />
-    </View>
+    <SafeAreaProvider>
+      <LocalQueryProvider>
+        <PaperProvider
+          theme={appTheme}
+          settings={{
+            icon: (props) => <MaterialCommunityIcons {...props} />,
+          }}
+        >
+          <View style={styles.container}>
+            {databaseReady ? <InventoryRouter /> : null}
+            <Snackbar
+              visible={databaseError !== null}
+              onDismiss={() => setDatabaseError(null)}
+              duration={Snackbar.DURATION_LONG}
+            >
+              {databaseError?.message ??
+                'Unable to initialize the database.'}
+            </Snackbar>
+            <StatusBar style="dark" />
+          </View>
+        </PaperProvider>
+      </LocalQueryProvider>
+    </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });
