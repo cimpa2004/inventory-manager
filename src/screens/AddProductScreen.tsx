@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet } from 'react-native';
 import { Button, HelperText, Text, TextInput } from 'react-native-paper';
 
@@ -8,6 +8,7 @@ import { globalStyles } from '../theme';
 
 type AddProductScreenProps = {
   onProductCreated: () => void;
+  initialCode?: string;
 };
 
 type ProductForm = {
@@ -30,13 +31,20 @@ const initialForm: ProductForm = {
 
 export function AddProductScreen({
   onProductCreated,
+  initialCode = '',
 }: AddProductScreenProps) {
-  const [form, setForm] = useState(initialForm);
+  const [form, setForm] = useState({ ...initialForm, code: initialCode });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const createProductMutation = useLocalMutation<CreateProductInput, number>(
     createProduct,
     ['products'],
   );
+
+  useEffect(() => {
+    if (initialCode) {
+      setForm((current) => ({ ...current, code: initialCode }));
+    }
+  }, [initialCode]);
 
   const updateField = (field: keyof ProductForm, value: string) => {
     setForm((current) => ({ ...current, [field]: value }));

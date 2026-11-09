@@ -6,6 +6,15 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to scan inventory codes",
+          "barcodeScannerEnabled": true
+        }
+      ]
+    ],
     "ios": {
       "supportsTablet": true
     },

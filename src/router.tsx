@@ -3,11 +3,12 @@ import { BottomNavigation } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AddProductScreen } from './screens/AddProductScreen';
-import { CameraPlaceholderScreen } from './screens/CameraPlaceholderScreen';
+import { CameraScannerScreen } from './screens/CameraScannerScreen';
 import { ProductListScreen } from './screens/ProductListScreen';
 
 export function InventoryRouter() {
   const [index, setIndex] = useState(0);
+  const [scannedCode, setScannedCode] = useState('');
 
   const routes = [
     { key: 'products', title: 'Products', focusedIcon: 'package-variant' },
@@ -27,18 +28,29 @@ export function InventoryRouter() {
         case 'add':
           return (
             <SafeAreaView edges={['top']} style={{ flex: 1 }}>
-              <AddProductScreen onProductCreated={() => setIndex(0)} />
+              <AddProductScreen
+                initialCode={scannedCode}
+                onProductCreated={() => {
+                  setScannedCode('');
+                  setIndex(0);
+                }}
+              />
             </SafeAreaView>
           );
         case 'camera':
           return (
             <SafeAreaView edges={['top']} style={{ flex: 1 }}>
-              <CameraPlaceholderScreen />
+              <CameraScannerScreen
+                onAddProduct={(code) => {
+                  setScannedCode(code);
+                  setIndex(1);
+                }}
+              />
             </SafeAreaView>
           );
       }
     },
-    [],
+    [scannedCode],
   );
 
   return (

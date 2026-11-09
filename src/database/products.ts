@@ -23,6 +23,11 @@ export type CreateProductInput = {
   quantity?: number;
 };
 
+export type RemoveProductStockInput = {
+  id: number;
+  quantity: number;
+};
+
 export async function createProduct(
   input: CreateProductInput,
   database?: SQLiteDatabase,
@@ -52,6 +57,25 @@ export async function getProductByCode(
     'SELECT * FROM products WHERE code = ? LIMIT 1',
     code,
   );
+}
+
+export async function removeProductStock(
+  input: RemoveProductStockInput,
+  database?: SQLiteDatabase,
+): Promise<void> {
+  const db = database ?? (await getDatabase());
+  const result = await db.runAsync(
+    `UPDATE products
+     SET quantity = quantity - ?, updated_at = datetime('now')
+     WHERE id = ? AND quantity >= ?`,
+    input.quantity,
+    input.id,
+    input.quantity,
+  );
+
+  if (result.changes === 0) {
+    throw new Error('Unable to remove stock. The available quantity changed.');
+  }
 }
 
 export async function listProducts(

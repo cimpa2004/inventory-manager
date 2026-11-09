@@ -34,6 +34,7 @@ export const globalStyles = {
   },
   field: {
     marginTop: 12,
+    backgroundColor: appTheme.colors.surfaceVariant,
   },
   primaryButton: {
     marginTop: 20,

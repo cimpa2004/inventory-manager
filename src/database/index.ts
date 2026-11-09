@@ -4,6 +4,8 @@ export {
   createProduct,
   getProductByCode,
   listProducts,
+  removeProductStock,
   type CreateProductInput,
+  type RemoveProductStockInput,
   type Product,
 } from './products';
